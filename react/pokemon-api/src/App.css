@@ -1,10 +1,4 @@
-/* Estilo para el contenedor principal */
-.container {
-  display: flex;
-
-  align-items: flex-start; /* Alinea los elementos en la parte superior del contenedor */
-  height: 100vh;
-  background-color: #4c6a88;
+.container-fluid {
 }
 
 /* Estilo para el contenido principal */
@@ -65,4 +59,24 @@ a {
 /* Cambiar el color del texto del enlace al pasar el ratón sobre él */
 a:hover {
   color: #0056b3;
+}
+
+.pokemon-list li {
+  background-color: #343a40; /* Fondo gris oscuro */
+  color: #ffffff; /* Texto blanco */
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.25rem;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+}
+
+/* Estilo para el texto al lado del checkbox */
+.sort-text {
+  color: #ffffff;
 }

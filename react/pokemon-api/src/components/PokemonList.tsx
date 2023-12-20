@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+
 const url = "https://pokeapi.co/api/v2/pokemon/";
 
 interface Pokemon {
@@ -8,8 +9,9 @@ interface Pokemon {
 
 const PokemonList: React.FC = () => {
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
-  const [filteredPokemonList, setFilteredPokemonList] = useState<Pokemon[]>([]);
-  const [valorInput, setValorInput] = useState("");
+  const [query, setQuery] = useState("");
+  const [isSortedAsc, setIsSortedAsc] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchPokemonList = async () => {
@@ -19,29 +21,32 @@ const PokemonList: React.FC = () => {
           name: pokemon.name,
         }));
         setPokemonList(list);
-        setFilteredPokemonList(list);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching Pokémon list:", error);
+        setIsLoading(false);
       }
     };
+
     fetchPokemonList();
   }, []);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const query = event.target.value;
-    setValorInput(query);
-    const filteredList = pokemonList.filter((pokemon) =>
-      pokemon.name.toLowerCase().includes(query.toLowerCase())
-    );
-    setFilteredPokemonList(filteredList);
+    setQuery(event.target.value);
   };
 
-  const orderByAlph = () => {
-    const orderedList = [...filteredPokemonList].sort((a, b) =>
-      a.name.localeCompare(b.name)
-    );
-    setFilteredPokemonList(orderedList);
+  const handleSort = () => {
+    setIsSortedAsc(!isSortedAsc);
   };
+
+  const filteredPokemonList = pokemonList
+    .filter((pokemon) =>
+      pokemon.name.toLowerCase().includes(query.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (isSortedAsc) return a.name.localeCompare(b.name);
+      return 0;
+    });
 
   return (
     <div className="main-content">
@@ -56,14 +61,28 @@ const PokemonList: React.FC = () => {
           onChange={handleSearch}
         />
       </div>
-      <button type="button" className="sort-button" onClick={orderByAlph}>
-        Order
-      </button>
-      <ul className="pokemon-list">
-        {filteredPokemonList.map((pokemon) => (
-          <li key={pokemon.name}>{pokemon.name}</li>
-        ))}
-      </ul>
+      <div className=" mb-3">
+        <input
+          type="checkbox"
+          checked={isSortedAsc}
+          onChange={handleSort}
+          className="ml-2"
+        />
+        <label className="sort-text ml-4 mb-0">Sort by Name</label>
+      </div>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <ul className="pokemon-list">
+          {filteredPokemonList.length === 0 ? (
+            <p>No results found.</p>
+          ) : (
+            filteredPokemonList.map((pokemon) => (
+              <li key={pokemon.name}>{pokemon.name}</li>
+            ))
+          )}
+        </ul>
+      )}
     </div>
   );
 };
